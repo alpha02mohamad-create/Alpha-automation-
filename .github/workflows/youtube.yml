@@ -1,17 +1,13 @@
 name: YouTube Shorts Automation
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
+
   schedule:
-    # 12:00 PM ET
     - cron: "0 16 * * *"
-    # 2:00 PM ET
     - cron: "0 18 * * *"
-    # 4:00 PM ET
     - cron: "0 20 * * *"
-    # 6:00 PM ET
     - cron: "0 22 * * *"
-    # 8:00 PM ET
     - cron: "0 0 * * *"
 
 jobs:
@@ -54,4 +50,8 @@ jobs:
         run: |
           if [ -f history/published_content.json ]; then
             git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add history/published_content.json
+            git diff --cached --quiet || git commit -m "Update published content history"
+            git push
+          fi
