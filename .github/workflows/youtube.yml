@@ -1,0 +1,62 @@
+name: YouTube Shorts Automation
+
+on:
+workflow_dispatch:
+schedule:
+# التشغيل الأول/الاختبار يكون يدويًا من Actions.
+# بعد ذلك يعمل تلقائيًا 5 مرات يوميًا.
+# الأوقات بتوقيت UTC:
+# 12:00 PM ET = 16:00 UTC
+# 2:00 PM ET  = 18:00 UTC
+# 4:00 PM ET  = 20:00 UTC
+# 6:00 PM ET  = 22:00 UTC
+# 8:00 PM ET  = 00:00 UTC (اليوم التالي)
+- cron: "0 16 * * *"
+- cron: "0 18 * * *"
+- cron: "0 20 * * *"
+- cron: "0 22 * * *"
+- cron: "0 0 * * *"
+
+jobs:
+generate-and-publish:
+runs-on: ubuntu-latest
+
+permissions:
+  contents: write
+
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+
+  - name: Set up Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: "3.11"
+
+  - name: Install system dependencies
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y ffmpeg
+
+  - name: Install Python dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+
+  - name: Run automation
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      FLUX_API_KEY: ${{ secrets.FLUX_API_KEY }}
+      FLUX_API_ID: ${{ secrets.FLUX_API_ID }}
+      YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
+    run: |
+      python main.py
+
+  - name: Save content history
+    if: always()
+    run: |
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      git add history/published_content.json
+      git diff --cached --quiet || git commit -m "Update published content history"
+      git push
