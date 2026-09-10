@@ -1,8 +1,7 @@
 name: YouTube Shorts Automation
 
-on:
-  workflow_dispatch: {}
-
+"on":
+  workflow_dispatch:
   schedule:
     - cron: "0 16 * * *"
     - cron: "0 18 * * *"
@@ -42,8 +41,7 @@ jobs:
           FLUX_API_KEY: ${{ secrets.FLUX_API_KEY }}
           FLUX_API_ID: ${{ secrets.FLUX_API_ID }}
           YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
-        run: |
-          python main.py
+        run: python main.py
 
       - name: Save content history
         if: always()
