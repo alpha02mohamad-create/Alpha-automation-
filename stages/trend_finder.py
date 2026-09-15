@@ -153,7 +153,7 @@ def get_next_idea() -> dict:
             user_prompt=user_prompt,
             temperature=1.0,
             max_output_tokens=MAX_OUTPUT_TOKENS,
-            thinking_level="minimal",  # فكرة قصيرة ومباشرة، مفيش داعي لتفكير عميق
+            thinking_level="low",  # فكرة قصيرة ومباشرة، مفيش داعي لتفكير عميق
         )
         idea = {
             "content_type": content_type,
